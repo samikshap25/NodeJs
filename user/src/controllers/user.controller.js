@@ -1,17 +1,15 @@
-// src/controllers/user.controller.js
+const { User, Department, JobRole, Salary } = require("../models");
 
-const getUsers = (req, res) => {
-  res.json({ message: "All users (admin/superadmin only)" });
-};
-
-const getMyProfile = (req, res) => {
-  res.json({
-    message: "My profile",
-    user: req.user
+exports.getUsers = async (req, res) => {
+  const users = await User.findAll({
+    include: [Department, JobRole, Salary]
   });
+  res.json(users);
 };
 
-module.exports = {
-  getUsers,
-  getMyProfile
+exports.getMyProfile = async (req, res) => {
+  const user = await User.findByPk(req.user.id, {
+    include: [Department, JobRole, Salary]
+  });
+  res.json(user);
 };

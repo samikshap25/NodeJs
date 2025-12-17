@@ -1,26 +1,25 @@
-const { Sequelize, DataTypes } = require("sequelize");
-require("dotenv").config();
+const Sequelize = require("sequelize");
+const sequelize = require("../config/database");
 
-const sequelize = new Sequelize(
-  process.env.DB_NAME,
-  process.env.DB_USER,
-  process.env.DB_PASSWORD,
-  {
-    host: process.env.DB_HOST,
-    dialect: "postgres",
-  }
-);
+const User = require("./user.model")(sequelize, Sequelize.DataTypes);
+const Department = require("./department.model")(sequelize, Sequelize.DataTypes);
+const JobRole = require("./jobRole.model")(sequelize, Sequelize.DataTypes);
+const Salary = require("./salary.model")(sequelize, Sequelize.DataTypes);
 
-const db = {};
-db.sequelize = sequelize;
-db.Sequelize = Sequelize;
+/* Relations */
+User.hasMany(Department, { foreignKey: "userId", onDelete: "CASCADE" });
+Department.belongsTo(User, { foreignKey: "userId" });
 
-// ✅ EXACT FILE NAMES
-db.User = require("./user.model")(sequelize, DataTypes);
-db.Department = require("./department.model")(sequelize, DataTypes);
+User.hasOne(JobRole, { foreignKey: "userId", onDelete: "CASCADE" });
+JobRole.belongsTo(User, { foreignKey: "userId" });
 
-// ✅ RELATION
-db.Department.hasMany(db.User);
-db.User.belongsTo(db.Department);
+User.hasOne(Salary, { foreignKey: "userId", onDelete: "CASCADE" });
+Salary.belongsTo(User, { foreignKey: "userId" });
 
-module.exports = db;
+module.exports = {
+  sequelize,
+  User,
+  Department,
+  JobRole,
+  Salary
+};

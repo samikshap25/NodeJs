@@ -1,21 +1,11 @@
-const express = require("express");
-const router = express.Router();
+const router = require("express").Router();
+const { Department } = require("../models");
+const auth = require("../middleware/auth.middleware");
+const role = require("../middleware/role.middleware");
 
-const {
-  createDepartment,
-  getDepartments
-} = require("../controllers/department.controller");
-
-const { authenticate } = require("../middleware/auth.middleware");
-const { authorize } = require("../middleware/role.middleware");
-
-router.post(
-  "/",
-  authenticate,
-  authorize("admin", "superadmin"),
-  createDepartment
-);
-
-router.get("/", authenticate, getDepartments);
+router.post("/", auth, role("admin", "superadmin"), async (req, res) => {
+  const dept = await Department.create(req.body);
+  res.json(dept);
+});
 
 module.exports = router;

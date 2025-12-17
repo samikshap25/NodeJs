@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
-  return sequelize.define("Department", {
+  return sequelize.define("JobRole", {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-    departmentName: { type: DataTypes.STRING, allowNull: false }
+    title: { type: DataTypes.STRING, allowNull: false }
   });
 };
